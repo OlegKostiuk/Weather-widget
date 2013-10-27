@@ -15,7 +15,7 @@ import org.w3c.dom.NodeList;
 
 public class WeatherParser {
 
-	public Weather getCurentConditionForSity(String location) {
+	public Weather getCurentConditionForCity(String location) {
 		
 		Weather currentWeather = new Weather();
 		NodeList nl = null;
@@ -116,14 +116,6 @@ public class WeatherParser {
 		}
 		
 		return currentWeather;
-	}
-
-	public static void main(String[] args) {
-		
-		String weatherInCity = "Lviv";
-		
-		WeatherParser parse = new WeatherParser();
-		System.out.println(parse.getCurentConditionForSity(weatherInCity));
 	}
 
 }
