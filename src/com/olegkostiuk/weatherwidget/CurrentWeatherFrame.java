@@ -137,8 +137,7 @@ public class CurrentWeatherFrame extends JFrame {
 		try {
 			imagePanel.setImage(weather.getWeatherIconUrl());
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			 System.err.println("Exception:" + e.toString());
 		}
 
 		locationLabel.setText(weather.getLocation());
