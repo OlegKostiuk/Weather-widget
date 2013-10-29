@@ -2,10 +2,15 @@ package com.olegkostiuk.weatherwidget;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,17 +23,21 @@ public class CurrentWeatherFrame extends JFrame {
 
 	private String[] defaultJLabelValues = { "Wind speed: ", "0", "Pressure: ",
 			"0", "Cloudcover: ", "N/A", "Visibility: ", "0", "Humidity: ", "0" };
-	private final String LOCATION = "Lviv";
-	private final Color GREEN_LABEL = new Color( 146, 167, 59);
+	private final String[] LOCATION_STRINGS = { "Vinnitsa", "Dnipropetrovsk",
+			"Donetsk", "Zhytomyr", "Zaporizhzhya", "Ivanofrankivsk", "Kiev",
+			"Kirovograd", "Lugansk", "Luck", "Lviv", "Mykolayiv", "Odesa",
+			"Poltava", "Rivne", "Simferopol", "Sumy", "Ternopil", "Uzhgorod",
+			"Kharkov", "Kherson", "Khmelinitski", "Cherkasy", "Chernihiv",
+			"Chernivtsi" };
+	private final Color GREEN_LABEL = new Color(146, 167, 59);
 	private final Color GRAY_LABEL = new Color(130, 130, 130);
-	
-	
+
 	private JPanel contentPane;
 	private JPanel mainInformationPanel;
 	private JPanel mainTextInformation;
 	private ImageJPanel imagePanel;
 	private JPanel additionalInformation;
-	private JLabel locationLabel;
+	private JComboBox<String> locationBox;
 	private JLabel temperatureLabel;
 	private JLabel descriptionLabel;
 	private JLabel[] currentWeatherAdditionalLabels;
@@ -54,14 +63,14 @@ public class CurrentWeatherFrame extends JFrame {
 	 */
 	public CurrentWeatherFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 300, 180);
-		setMinimumSize(new Dimension(300,180));
+		setBounds(100, 100, 350, 190);
+		setMinimumSize(new Dimension(350, 190));
 		setTitle("Weather");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new GridLayout(2, 1));
 		setContentPane(contentPane);
-		
+
 		// set system look and feel
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -78,27 +87,33 @@ public class CurrentWeatherFrame extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		mainInformationPanel = new JPanel();
-		mainInformationPanel.setLayout(new GridLayout(1, 2));
+		mainInformationPanel.setLayout(new FlowLayout());
 
 		imagePanel = new ImageJPanel();
 
 		mainTextInformation = new JPanel();
 		mainTextInformation.setLayout(new GridLayout(3, 1));
 
-		locationLabel = new JLabel();
-		locationLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-		locationLabel.setHorizontalAlignment(JLabel.CENTER);
+		locationBox = new JComboBox<String>(LOCATION_STRINGS);
+		locationBox.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				JComboBox<String> box = (JComboBox<String>) e.getSource();
+				updateCurrentWeather((String) box.getSelectedItem());
+
+			}
+		});
 
 		temperatureLabel = new JLabel();
-		
+
 		temperatureLabel.setHorizontalAlignment(JLabel.CENTER);
 
 		descriptionLabel = new JLabel();
 		descriptionLabel.setHorizontalAlignment(JLabel.CENTER);
 
-		mainTextInformation.add(locationLabel);
+		mainTextInformation.add(locationBox);
 		mainTextInformation.add(temperatureLabel);
 		mainTextInformation.add(descriptionLabel);
 
@@ -111,11 +126,12 @@ public class CurrentWeatherFrame extends JFrame {
 		currentWeatherAdditionalLabels = new JLabel[10];
 
 		for (int i = 0; i < currentWeatherAdditionalLabels.length; i++) {
-			currentWeatherAdditionalLabels[i] = new JLabel(defaultJLabelValues[i]);
+			currentWeatherAdditionalLabels[i] = new JLabel(
+					defaultJLabelValues[i]);
 			additionalInformation.add(currentWeatherAdditionalLabels[i]);
 
-			// set green color for field name, and grey for field values 
-			if (i % 2 == 0) {	
+			// set green color for field name, and grey for field values
+			if (i % 2 == 0) {
 				currentWeatherAdditionalLabels[i].setForeground(GREEN_LABEL);
 			} else {
 				currentWeatherAdditionalLabels[i].setForeground(GRAY_LABEL);
@@ -124,8 +140,8 @@ public class CurrentWeatherFrame extends JFrame {
 
 		contentPane.add(mainInformationPanel);
 		contentPane.add(additionalInformation);
-
-		updateCurrentWeather(LOCATION);
+		
+		updateCurrentWeather((String)locationBox.getSelectedItem());
 
 	}
 
@@ -137,10 +153,9 @@ public class CurrentWeatherFrame extends JFrame {
 		try {
 			imagePanel.setImage(weather.getWeatherIconUrl());
 		} catch (MalformedURLException e) {
-			 System.err.println("Exception:" + e.toString());
+			System.err.println("Exception:" + e.toString());
 		}
 
-		locationLabel.setText(weather.getLocation());
 		temperatureLabel.setText(weather.getTempC() + " °C");
 		descriptionLabel.setText(weather.getWeatherDesc());
 
@@ -153,7 +168,8 @@ public class CurrentWeatherFrame extends JFrame {
 		currentWeatherAdditionalLabels[7].setText(weather.getVisibility()
 				+ " km");
 		currentWeatherAdditionalLabels[9].setText(weather.getHumidity() + " %");
-		
-		setTitle(weather.getLocation()+" " + weather.getWeatherDesc()+" "+weather.getTempC()+" °C");
+
+		setTitle(weather.getLocation() + " " + weather.getWeatherDesc() + " "
+				+ weather.getTempC() + " °C");
 	}
 }

@@ -10,12 +10,17 @@ import javax.swing.JPanel;
 
 public class ImageJPanel extends JPanel {
 
+	JLabel label;
+
 	public void setImage(String imgSrcUrl) throws MalformedURLException {
 		URL imageURL = new URL(imgSrcUrl);
 		ImageIcon icon = new ImageIcon(imageURL);
-		JLabel label = new JLabel(icon, JLabel.CENTER);
-		add(label);
-		//repaint();
+		if (label == null) {
+			label = new JLabel(icon, JLabel.CENTER);
+			add(label);
+		} else {
+			label.setIcon(icon);
+		}
 	}
 
 }
